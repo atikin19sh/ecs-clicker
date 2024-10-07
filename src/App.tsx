@@ -1,13 +1,7 @@
-import "./App.css";
+import GamePage from "./pages/game";
 
 function App() {
-  return (
-
-    <div>
-
-    </div>
-
-  );
+  return <GamePage />;
 }
 
 export default App;
