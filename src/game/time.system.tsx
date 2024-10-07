@@ -28,5 +28,5 @@ export function TimeSystem() {
     timeRef.current = time;
   });
 
-  return <></>;
+  return null;
 }

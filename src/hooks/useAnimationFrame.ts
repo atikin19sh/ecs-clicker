@@ -24,5 +24,5 @@ export const useAnimationFrame = (
   useEffect(() => {
     requestRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(requestRef.current);
-  }, []);
+  }, [callback]);
 };
