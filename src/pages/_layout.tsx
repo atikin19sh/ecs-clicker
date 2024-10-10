@@ -4,7 +4,7 @@ import { GameSystem } from "~/game/game.system";
 export default function GameLayout(props: { children: React.ReactNode }) {
   return (
     <>
-      <GameSystem />
+      {/* <GameSystem /> */}
       <div className="min-h-screen">
         <TopBar />
         {props.children}
