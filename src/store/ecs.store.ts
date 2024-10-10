@@ -4,11 +4,11 @@ import { immer } from "zustand/middleware/immer";
 import { shallow } from 'zustand/shallow';
 import type { C } from "~/ecs/components";
 import { E } from '~/ecs/entities';
-import type { CompValue, World } from '~/ecs/types';
+import type { AnyCompValue, CompValue, World } from '~/ecs/types';
 import { buildComponent } from "~/ecs/utils";
 
 const useECS = create<World>()(immer((set, get) => ({
-    entities: [],
+    entities: [] as Record<C, AnyCompValue>[],
 
     // Add entity to world
     addEntity: (entityId: number) => set((state) => {
@@ -76,17 +76,24 @@ const useECS = create<World>()(immer((set, get) => ({
 
     // Query entities with specific components
     query: ({include, exclude}: { include?: C[], exclude?: C[]}): number[] => {
-      let queries = get().entities;
+      const entities = get().entities;
 
-      if (include) {
-        queries = queries.filter((entity) => entity && include.every((componentName) => componentName in entity));
-      }
+      return entities.map((_, idx) => idx).filter(eid => {
+        const entity = entities[eid];
 
-      if (exclude) {
-        queries = queries.filter((entity) => entity && exclude.every((componentName) => !(componentName in entity)))
-      }
-
-      return queries.map((_, index) => index);
+        if (entity) {
+          if (include) {
+            if (exclude) {
+              return include.every((componentName) => componentName in entity) &&
+                exclude.every((componentName) => !(componentName in entity));
+            }
+            return include.every((componentName) => componentName in entity);
+          }
+          if (exclude) {
+            return exclude.every((componentName) => !(componentName in entity));
+          }
+        }
+      })
     },
   })))
 

@@ -28,9 +28,10 @@ function Person({title, eid}: Props) {
     return <div>
         <div>
             {title}
-            {/* HP:{entity[C.HEALTH] && entity[C.HEALTH].value ? entity[C.HEALTH].value : 0} */}
+            HP:{entity[C.HEALTH] && entity[C.HEALTH].value ? entity[C.HEALTH].value : 0}
             <Button onClick={setTarget} disabled={C.TARGET in entity}>Set as target</Button>
             <Button onClick={unsetTarget} disabled={!(C.TARGET in entity)}>Unset target</Button>
+            {entity[C.DAMAGE] && <div> -{entity[C.DAMAGE].value} HP/s</div>}
         </div>
     </div>
 }
