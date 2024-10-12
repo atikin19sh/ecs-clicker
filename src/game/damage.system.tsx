@@ -17,7 +17,7 @@ export function DamageSystem() {
         if (damaged) {
             for (const eid of damaged) {
                 const e = entities.get(eid)!;
-                setComponentValue(eid, C.HEALTH, e[C.HEALTH]! - e[C.DAMAGE]!);
+                setComponentValue(eid, C.HEALTH, e.get(C.HEALTH) - e.get(C.DAMAGE));
             }
         }
 

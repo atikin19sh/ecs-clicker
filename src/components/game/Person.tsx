@@ -28,10 +28,10 @@ function Person({title, eid}: Props) {
     return <div>
         <div>
             {title}
-            HP:{entity[C.HEALTH] && entity[C.HEALTH] ? entity[C.HEALTH] : 0}
-            <Button onClick={setTarget} disabled={C.TARGET in entity}>Set as target</Button>
-            <Button onClick={unsetTarget} disabled={!(C.TARGET in entity)}>Unset target</Button>
-            {entity[C.DAMAGE] && <div> -{entity[C.DAMAGE]} HP/s</div>}
+            HP:{entity.has(C.HEALTH) ? entity.get(C.HEALTH) : 0}
+            <Button onClick={setTarget} disabled={entity.has(C.TARGET)}>Set as target</Button>
+            <Button onClick={unsetTarget} disabled={!(entity.has(C.TARGET))}>Unset target</Button>
+            {entity.has(C.DAMAGE) && <div> -{entity.get(C.DAMAGE)} HP/s</div>}
         </div>
     </div>
 }
