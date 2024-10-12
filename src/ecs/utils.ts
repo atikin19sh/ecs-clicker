@@ -1,3 +1,4 @@
+import type { C } from "./components";
 import { E } from "./entities";
 
 export const createAllEntities = (addEntityFn: (entityId: E) => void) => {
@@ -5,5 +6,18 @@ export const createAllEntities = (addEntityFn: (entityId: E) => void) => {
 
     for (let i = 0; i < entitesAmount; i++) {
         addEntityFn(i);
+    }
+}
+
+export function iter(
+    queryFn: (queryValues: { include?: C[], exclude?: C[]}) => E[],
+    queryValues: { include?: C[], exclude?: C[]},
+    callback: (eid: E) => void
+) {
+    const queriedEids = queryFn(queryValues);
+    if (queriedEids) {
+        for (const eid of queriedEids) {
+            callback(eid);
+        }
     }
 }

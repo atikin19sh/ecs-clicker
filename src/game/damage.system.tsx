@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { C } from "~/ecs/components";
+import { iter } from "~/ecs/utils";
 import useECS from "~/store/ecs.store";
 import { useWorldStore } from "~/store/world.store";
 
@@ -13,28 +14,19 @@ export function DamageSystem() {
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     useEffect(() => {
-        const damaged = query({ include: [C.HEALTH, C.TARGET, C.DAMAGE] });
-        if (damaged) {
-            for (const eid of damaged) {
-                const e = entities.get(eid)!;
-                setComponentValue(eid, C.HEALTH, e.get(C.HEALTH) - e.get(C.DAMAGE));
-            }
-        }
+        iter(query, { include: [C.HEALTH, C.TARGET, C.DAMAGE] }, (damaged) => {
+            const e = entities.get(damaged)!;
+            setComponentValue(damaged, C.HEALTH, e.get(C.HEALTH) - e.get(C.DAMAGE));
+        });
 
-        const targetsWithoutDamage = query({ include: [C.HEALTH, C.TARGET], exclude: [C.DAMAGE] });
-        if (targetsWithoutDamage) {
-            for (const target of targetsWithoutDamage) {
-                addComponent(target, C.DAMAGE);
-                setComponentValue(target, C.DAMAGE, 1);
-            }
-        }
+        iter(query, { include: [C.HEALTH, C.TARGET], exclude: [C.DAMAGE] }, (target) => {
+            addComponent(target, C.DAMAGE);
+            setComponentValue(target, C.DAMAGE, 1);
+        })
 
-        const damagedWithoutTarget = query({ include: [C.HEALTH, C.DAMAGE], exclude: [C.TARGET] });
-        if (damagedWithoutTarget) {
-            for (const damaged of damagedWithoutTarget) {
-                removeComponent(damaged, C.DAMAGE);
-            }
-        }
+        iter(query, { include: [C.HEALTH, C.DAMAGE], exclude: [C.TARGET] }, (damaged) => {
+            removeComponent(damaged, C.DAMAGE);
+        })
     }, [tick]);
     
     return null;
