@@ -1,6 +1,7 @@
 import { useEffect } from "react";
+
 import { C } from "~/ecs/components";
-import { iter } from "~/ecs/utils";
+import { iter, perTick } from "~/ecs/utils";
 import useECS from "~/store/ecs.store";
 import { useWorldStore } from "~/store/world.store";
 
@@ -16,7 +17,7 @@ export function DamageSystem() {
     useEffect(() => {
         iter(query, { include: [C.HEALTH, C.TARGET, C.DAMAGE] }, (damaged) => {
             const e = entities.get(damaged)!;
-            setComponentValue(damaged, C.HEALTH, e.get(C.HEALTH) - e.get(C.DAMAGE));
+            setComponentValue(damaged, C.HEALTH, e.get(C.HEALTH) - perTick(e.get(C.DAMAGE)));
         });
 
         iter(query, { include: [C.HEALTH, C.TARGET], exclude: [C.DAMAGE] }, (targeted) => {

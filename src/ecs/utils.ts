@@ -1,3 +1,4 @@
+import { TICK_MS } from "~/game/const";
 import type { C } from "./components";
 import { E } from "./entities";
 
@@ -20,4 +21,8 @@ export function iter(
             callback(eid);
         }
     }
+}
+
+export function perTick(value: number): number {
+    return value * TICK_MS / 1000;
 }

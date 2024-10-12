@@ -2,7 +2,7 @@ import {enableMapSet} from 'immer';
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-import { type C, comps } from "~/ecs/components";
+import { comps } from "~/ecs/components";
 import { E } from '~/ecs/entities';
 import type { Entity, World } from '~/ecs/types';
 
