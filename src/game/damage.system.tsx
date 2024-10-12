@@ -16,8 +16,8 @@ export function DamageSystem() {
         const damaged = query({ include: [C.HEALTH, C.TARGET, C.DAMAGE] });
         if (damaged) {
             for (const eid of damaged) {
-                const e = entities[eid];
-                setComponentValue(eid, C.HEALTH, { value: e[C.HEALTH].value - e[C.DAMAGE].value })
+                const e = entities.get(eid)!;
+                setComponentValue(eid, C.HEALTH, e[C.HEALTH]! - e[C.DAMAGE]!);
             }
         }
 
@@ -25,7 +25,7 @@ export function DamageSystem() {
         if (targetsWithoutDamage) {
             for (const target of targetsWithoutDamage) {
                 addComponent(target, C.DAMAGE);
-                setComponentValue(target, C.DAMAGE, { value: 1 });
+                setComponentValue(target, C.DAMAGE, 1);
             }
         }
 

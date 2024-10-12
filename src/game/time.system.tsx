@@ -20,7 +20,6 @@ export function TimeSystem() {
     const nextTick = lastTickTimeRef.current + TICK_MS;
 
     if (time >= nextTick) {
-      console.log("before tick", lastTickTimeRef.current, time);
       onTick();
       lastTickTimeRef.current = nextTick;
     }

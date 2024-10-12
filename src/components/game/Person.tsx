@@ -8,7 +8,7 @@ type Props = {
 }
 
 function Person({title, eid}: Props) {
-    const entity = useECS(state => state.entities[eid]);
+    const entity = useECS(state => state.entities.get(eid));
 
     const addComponent = useECS(state => state.addComponent);
     const removeComponent = useECS(state => state.removeComponent);
@@ -28,10 +28,10 @@ function Person({title, eid}: Props) {
     return <div>
         <div>
             {title}
-            HP:{entity[C.HEALTH] && entity[C.HEALTH].value ? entity[C.HEALTH].value : 0}
+            HP:{entity[C.HEALTH] && entity[C.HEALTH] ? entity[C.HEALTH] : 0}
             <Button onClick={setTarget} disabled={C.TARGET in entity}>Set as target</Button>
             <Button onClick={unsetTarget} disabled={!(C.TARGET in entity)}>Unset target</Button>
-            {entity[C.DAMAGE] && <div> -{entity[C.DAMAGE].value} HP/s</div>}
+            {entity[C.DAMAGE] && <div> -{entity[C.DAMAGE]} HP/s</div>}
         </div>
     </div>
 }

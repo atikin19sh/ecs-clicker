@@ -6,7 +6,7 @@ import { E } from "~/ecs/entities";
 import useECS from "~/store/ecs.store";
 
 export function InitSystem() {
-    const eAmount = useECS(state => state.entities.length);
+    const eAmount = useECS(state => state.entities.size);
     const addEntity = useECS(state => state.addEntity);
     const setComponentValue = useECS(state => state.setComponentValue);
     const addComponent = useECS(state => state.addComponent);
@@ -16,10 +16,10 @@ export function InitSystem() {
             createAllEntities(addEntity);
 
             addComponent(E.PLAYER, C.HEALTH);
-            setComponentValue(E.PLAYER, C.HEALTH, { value: 100 });
+            setComponentValue(E.PLAYER, C.HEALTH, 100);
 
             addComponent(E.ENEMY, C.HEALTH);
-            setComponentValue(E.ENEMY, C.HEALTH, { value: 100 });
+            setComponentValue(E.ENEMY, C.HEALTH, 100);
         }
     }, [eAmount, addEntity, addComponent, setComponentValue]);
 
