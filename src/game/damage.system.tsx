@@ -19,13 +19,13 @@ export function DamageSystem() {
             setComponentValue(damaged, C.HEALTH, e.get(C.HEALTH) - e.get(C.DAMAGE));
         });
 
-        iter(query, { include: [C.HEALTH, C.TARGET], exclude: [C.DAMAGE] }, (target) => {
-            addComponent(target, C.DAMAGE);
-            setComponentValue(target, C.DAMAGE, 1);
+        iter(query, { include: [C.HEALTH, C.TARGET], exclude: [C.DAMAGE] }, (targeted) => {
+            addComponent(targeted, C.DAMAGE);
+            setComponentValue(targeted, C.DAMAGE, 1);
         })
 
-        iter(query, { include: [C.HEALTH, C.DAMAGE], exclude: [C.TARGET] }, (damaged) => {
-            removeComponent(damaged, C.DAMAGE);
+        iter(query, { include: [C.HEALTH, C.DAMAGE], exclude: [C.TARGET] }, (untargeted) => {
+            removeComponent(untargeted, C.DAMAGE);
         })
     }, [tick]);
     
