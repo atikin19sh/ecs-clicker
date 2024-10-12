@@ -7,10 +7,11 @@ import useECS from "~/store/ecs.store";
 
 export function InitSystem() {
     const eAmount = useECS(state => state.entities.length);
-    const { addEntity, addComponent, setComponentValue } = useECS();
+    const addEntity = useECS(state => state.addEntity);
+    const setComponentValue = useECS(state => state.setComponentValue);
+    const addComponent = useECS(state => state.addComponent);
 
     useLayoutEffect(() => {
-        console.log("InitSystem useLayoutEffect");
         if (!eAmount) {
             createAllEntities(addEntity);
 

@@ -4,7 +4,10 @@ import useECS from "~/store/ecs.store";
 import { useWorldStore } from "~/store/world.store";
 
 export function DamageSystem() {
-    const { query, addComponent, setComponentValue, removeComponent } = useECS();
+    const removeComponent = useECS(state => state.removeComponent);
+    const setComponentValue = useECS(state => state.setComponentValue);
+    const addComponent = useECS(state => state.addComponent);
+    const query = useECS(state => state.query);
     const entities = useECS(state => state.entities);
     const tick = useWorldStore(state => state.tick);
 
