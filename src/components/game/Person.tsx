@@ -12,8 +12,6 @@ function Person({title, eid}: Props) {
 
     const addComponent = useECS(state => state.addComponent);
     const removeComponent = useECS(state => state.removeComponent);
-    
-    console.log(entity)
 
     const setTarget = () => {
         addComponent(eid, C.TARGET);
@@ -28,7 +26,7 @@ function Person({title, eid}: Props) {
     return <div>
         <div>
             {title}
-            HP:{entity.has(C.HEALTH) ? entity.get(C.HEALTH) : 0}
+            HP:{entity.has(C.HEALTH) ? entity.get(C.HEALTH).toFixed(0) : 0}
             <Button onClick={setTarget} disabled={entity.has(C.TARGET)}>Set as target</Button>
             <Button onClick={unsetTarget} disabled={!(entity.has(C.TARGET))}>Unset target</Button>
             {entity.has(C.DAMAGE) && <div> -{entity.get(C.DAMAGE)} HP/s</div>}

@@ -6,6 +6,7 @@ export type Entity = Map<C, any>;
 
 export type World = {
     entities: Map<E, Entity>;
+    entitiesIdByComponent: Map<C, Map<E, number>>;
     addEntity: (entityId: E) => void;
     removeEntity: (entityId: E) => void;
     addComponent: (entityId: E, componentName: C) => void;
@@ -13,5 +14,7 @@ export type World = {
     setComponentValue: (entityId: E, componentName: C, componentValue: any) => void;
     removeComponent: (entityId: E, componentName: C) => void;
     hasComponent: (entityId: E, componentName: C) => boolean;
-    query: ({include, exclude}: { include?: C[], exclude?: C[]}) => E[];
+    query: ({include, exclude}: { include: C[], exclude?: C[]}) => E[];
+    // deprecated
+    _queryAll: ({include, exclude}: { include?: C[], exclude?: C[]}) => E[];
 }

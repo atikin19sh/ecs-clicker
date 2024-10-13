@@ -2,14 +2,15 @@ import {enableMapSet} from 'immer';
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-import { comps } from "~/ecs/components";
+import { type C, comps } from "~/ecs/components";
 import { E } from '~/ecs/entities';
-import type { Entity, World } from '~/ecs/types';
+import type { World } from '~/ecs/types';
 
 enableMapSet();
 
 const useECS = create<World>()(immer((set, get) => ({
-    entities: new Map<E, Entity>(), // Change from Array to Map
+    entities: new Map(),
+    entitiesIdByComponent: new Map(),
 
     // Add entity to world
     addEntity: (entityId) => set((state) => {
@@ -44,6 +45,13 @@ const useECS = create<World>()(immer((set, get) => ({
       
       const newComponentValue = comps.get(componentName);
       entity.set(componentName, newComponentValue);
+
+      if (!state.entitiesIdByComponent.has(componentName)) {
+        state.entitiesIdByComponent.set(componentName, new Map());
+      }
+
+      state.entitiesIdByComponent.get(componentName)!.set(entityId, 0);
+
       console.info(`${componentName} added to ${E[entityId]}`);
     }),
 
@@ -63,14 +71,16 @@ const useECS = create<World>()(immer((set, get) => ({
       
       // @ts-ignore
       entity.set(componentName, componentValue);
-      console.log(`${E[entityId]} ${componentName} set to: ${componentValue}`);
+      console.info(`${E[entityId]} ${componentName} set to: ${componentValue}`);
     }),
 
     // Remove component from entity
     removeComponent: (entityId, componentName) => set((state) => {
-      const entity = state.entities.get(entityId);
-      if (entity) {
-        entity.delete(componentName);
+      if (state.entities.has(entityId)) {
+        state.entities.get(entityId)!.delete(componentName);
+
+        state.entitiesIdByComponent.get(componentName)!.delete(entityId);
+
         console.info(`${componentName} removed from ${E[entityId]}`);
       }
     }),
@@ -81,8 +91,46 @@ const useECS = create<World>()(immer((set, get) => ({
       return entity ? entity.has(componentName) : false;
     },
 
-    // Query entities with specific components
+    // Query entities by specific components set
     query: ({include, exclude}) => {
+      let shortestQuery: C | null = null;
+      
+      for (const included of include) {
+        if (!get().entitiesIdByComponent.get(included)?.size) {
+          return [];
+        }
+
+        if (!shortestQuery) {
+          shortestQuery = included;
+        } else {
+          const includedSize = get().entitiesIdByComponent.get(included)?.size ?? Number.POSITIVE_INFINITY;
+          const shortestQuerySize = get().entitiesIdByComponent.get(shortestQuery)?.size ?? Number.POSITIVE_INFINITY;
+
+          if (includedSize < shortestQuerySize) {
+            shortestQuery = included;
+          }
+        }
+      }
+
+      const shortestQueryEids = Array.from(get().entitiesIdByComponent.get(shortestQuery!)!.keys());
+      const otherInclude = include.filter(included => included !== shortestQuery);
+
+      let queried = shortestQueryEids.filter(eid => {
+        return otherInclude.every(included => get().entitiesIdByComponent.get(included)?.has(eid))
+      });
+
+      if (exclude) {
+        queried = queried.filter(eid => {
+          return exclude.every(excluded => !get().entitiesIdByComponent.get(excluded)?.has(eid))
+        })
+      }
+
+      return queried;
+    },
+
+    // deprecated: slower than state.query, caused by iteration for all entities
+    // Query by all entities with specific components
+    _queryAll: ({include, exclude}) => {
       const entities = Array.from(get().entities.entries());
 
       return entities.filter(([_, entity]) => {
@@ -101,6 +149,6 @@ const useECS = create<World>()(immer((set, get) => ({
         return false;
       }).map(([eid]) => eid);
     },
-  })))
+})));
 
-  export default useECS;
+export default useECS;
